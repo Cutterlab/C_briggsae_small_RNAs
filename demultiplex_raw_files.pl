@@ -39,11 +39,12 @@ while (my $line = <GZ>) {
     my @numbers = $tmp_code =~ m/(N)/g;
     my $ns = scalar(@numbers);
     my $trim = substr $line, 4;
-    $output .= $line;
+    $output .= $trim;
     chomp($trim);
     $line = <GZ>;
     $output .= $line;
     $line = <GZ>;
+    $line = substr $line, 4;
     $output .= $line;
     my %mis_count={};
     my $mis0 = 0;
