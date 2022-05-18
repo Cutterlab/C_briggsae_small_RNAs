@@ -1,8 +1,11 @@
 # Temperature-dependent small RNA expression depends on wild genetic backgrounds of *Caenorhabditis briggsae*
 
-Scripts for analyzing small RNA sequencing data in C. briggsae from Fusca et al. (2022)
+Scripts for analyzing small RNA sequencing data in C. briggsae from Fusca et al. (2022), as well as the pseudo-reference genome sequence for strain HK104 used in these analyses. 
 
-# Description of scripts
+## HK104 pseudo-reference genome sequence
+HK104 Pseudo-reference Genome.zip contains the files for the pseudo-reference genome sequence for HK104, based off of the reference sequence for AF16. Contains the genome FASTA file (c_briggsae_HK104_NGM_reference.fa), GFF3 files of annotated repeat regions (c_briggsae_HK104_NGM_Alignments_repeat_annotations.gff3) and transposable elements (c_briggsae_HK104_NGM_Alignments_transposable_element_annotations.gff3), and the GTF file of gene annotations (lifted_c_briggsae_HK104_NGM_Alignments_canonical_geneset.gtf).
+
+## Description of scripts
 ### demultiplex.pl
 This Perl script was used to demultiplex our raw sequencing files and remove the 4 nucleotide 5' barcodes. This script was written by Wei Wang.
 
