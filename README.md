@@ -6,6 +6,8 @@ Scripts for analyzing small RNA sequencing data in C. briggsae from Fusca et al.
 ### demultiplex.pl
 This Perl script was used to demultiplex our raw sequencing files and remove the 4 nucleotide 5' barcodes. This script was written by Wei Wang.
 
+### genSpecRef.py
+This Python script was used to apply SNPs and indels from the HK104 genome to the AF16 reference genome sequence, in order to make a genotype-specific reference genome sequence for HK104 in FASTA format. This script was written by Santiago Sánchez-Ramírez.
 
 ### Get_Genes_That_Lifted_To_HK104.R
 After using flo to transfer gene annotation coordinates from the AF16 reference genome to our HK104 pseudo-reference genome, this script was used to filter the results to keep only the genes for which all constituent parts (e.g. exons, UTRs) were successfully lifted from AF16 to HK104. 
