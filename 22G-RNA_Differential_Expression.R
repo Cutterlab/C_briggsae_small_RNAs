@@ -268,3 +268,73 @@ non_diff_genes_22G_no_TMM <- rownames(interaction_differences_22G_no_TMM)[!(
   rownames(interaction_differences_22G_no_TMM) %in% interaction_diff_genes_22G_no_TMM| 
     rownames(interaction_differences_22G_no_TMM) %in% genotype_diff_genes_22G_no_TMM | 
     rownames(interaction_differences_22G_no_TMM) %in% temperature_diff_genes_22G_no_TMM)]
+
+
+
+# Calculate, for each replicate, how many total 22G-RNAs align antisense to 
+# protein-coding genes, pseudogenes, repeats, and transposons, in units of Reads
+# Per Million
+twentyTwoG_replicateRPMs <- list()
+
+for (name in names(results)) {
+  antisense_twentyTwoG <- 1000000 * sum(results[[name]]$protein_coding_AS$count[
+    results[[name]]$protein_coding_AS$gene %in% rownames(lifted_allRaw22GCounts) &
+      results[[name]]$protein_coding_AS$first == "G" & 
+      results[[name]]$protein_coding_AS$length %in% c(21, 22, 23)]) / 
+    results.sizes[[name]]["perfect"]
+  
+  pseudogene_twentyTwoG <- 1000000 * sum(results[[name]]$pseudogene_AS$count[
+    results[[name]]$pseudogene_AS$gene %in% rownames(lifted_allRaw22GCounts) &
+      results[[name]]$pseudogene_AS$first == "G" & 
+      results[[name]]$pseudogene_AS$length %in% c(21, 22, 23)]) / 
+    results.sizes[[name]]["perfect"]
+  
+  repeat_twentyTwoG <- 1000000 * sum(results[[name]]$repeat_region_AS$count[
+    results[[name]]$repeat_region_AS$gene %in% rownames(lifted_allRaw22GCounts) &
+      results[[name]]$repeat_region_AS$first == "G" & 
+      results[[name]]$repeat_region_AS$length %in% c(21, 22, 23)]) / 
+    results.sizes[[name]]["perfect"]
+  
+  transposon_twentyTwoG <- 1000000 * sum(results[[name]]$transposable_element_AS$count[
+    results[[name]]$transposable_element_AS$gene %in% rownames(lifted_allRaw22GCounts) &
+      results[[name]]$transposable_element_AS$first == "G" & 
+      results[[name]]$transposable_element_AS$length %in% c(21, 22, 23)]) / 
+    results.sizes[[name]]["perfect"]
+  
+  if (substr(name, 1, 2) == "AF") {
+    genotype <- "AF16"
+  } else {
+    genotype <- "HK104"
+  }
+  temperature <- substr(name, 3, 4)
+  
+  
+  twentyTwoG_replicateRPMs[[name]] <-  data.frame(Genotype = genotype, Temperature = temperature, 
+                                                  Antisense = antisense_twentyTwoG, Pseudogene = pseudogene_twentyTwoG, 
+                                                  Repeat = repeat_twentyTwoG, Transposon = transposon_twentyTwoG, 
+                                                  stringsAsFactors = F)
+}
+
+# Remove replicate HK30-1 since this replicate had issues with sequencing
+twentyTwoG_replicateRPMs[["HK30-1"]] <- NULL
+twentyTwoG_replicateRPMs <- bind_rows(twentyTwoG_replicateRPMs) 
+
+
+# Fit a linear model to 22G-RNA expression for all 4 types of features to test
+# the significance of genotype effects, temperature effects, and a genotype-
+# temperature interaction, using HK104 at 20 degrees as the baseline
+dataForLM <- twentyTwoG_replicateRPMs
+dataForLM$Temperature <- factor(dataForLM$Temperature, levels = c(20, 14, 30))
+dataForLM$Genotype <- factor(dataForLM$Genotype, levels = c("HK104", "AF16"))
+
+summary(lm(Antisense ~ Genotype + Temperature + Genotype:Temperature, data = dataForLM))
+summary(lm(Pseudogene ~ Genotype + Temperature + Genotype:Temperature, data = dataForLM))
+summary(lm(Repeat ~ Genotype + Temperature + Genotype:Temperature, data = dataForLM))
+summary(lm(Transposon ~ Genotype + Temperature + Genotype:Temperature, data = dataForLM))
+
+# Repeat the linear modeling for protein-coding gene antisense 22G-RNAs, but this 
+# time use AF16 as the baseline genotype instead of HK104
+dataForLM2 <- twentyTwoG_replicateRPMs
+dataForLM2$Temperature <- factor(dataForLM2$Temperature, levels = c(20, 14, 30))
+dataForLM2$Genotype <- factor(dataForLM2$Genotype, levels = c("AF16", "HK104"))
+summary(lm(Antisense ~ Genotype + Temperature + Genotype:Temperature, data = dataForLM2))
