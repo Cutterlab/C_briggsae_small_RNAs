@@ -338,3 +338,62 @@ dataForLM2 <- twentyTwoG_replicateRPMs
 dataForLM2$Temperature <- factor(dataForLM2$Temperature, levels = c(20, 14, 30))
 dataForLM2$Genotype <- factor(dataForLM2$Genotype, levels = c("AF16", "HK104"))
 summary(lm(Antisense ~ Genotype + Temperature + Genotype:Temperature, data = dataForLM2))
+
+
+
+# Get the coordinates of the protein-coding genes that show a genotype-temperature
+# interaction on 22G-RNA expression, along with every annotated protein-coding gene
+load("~/WS272.gene.whole.transposons.repeats.RData")
+load("~/WS272.gene.parts.transposons.repeats.RData")
+protein_coding_all_briggsae_genes_coords <- gene.whole[gene.whole$gene_biotype == "protein_coding", ]
+protein_coding_interaction_genes_22G_coords_no_TMM <- gene.whole[gene.whole$gene_id %in% interaction_diff_genes_22G_no_TMM & gene.whole$gene_biotype == "protein_coding", ]
+
+# Get the starting positions of the genes on each chromosome that show a GxT interaction on 22G-RNA expression
+interaction_gene_chrI_start_coords <- start(ranges(protein_coding_interaction_genes_22G_coords_no_TMM)[seqnames(protein_coding_interaction_genes_22G_coords_no_TMM) == "I"])
+interaction_gene_chrII_start_coords <- start(ranges(protein_coding_interaction_genes_22G_coords_no_TMM)[seqnames(protein_coding_interaction_genes_22G_coords_no_TMM) == "II"])
+interaction_gene_chrIII_start_coords <- start(ranges(protein_coding_interaction_genes_22G_coords_no_TMM)[seqnames(protein_coding_interaction_genes_22G_coords_no_TMM) == "III"])
+interaction_gene_chrIV_start_coords <- start(ranges(protein_coding_interaction_genes_22G_coords_no_TMM)[seqnames(protein_coding_interaction_genes_22G_coords_no_TMM) == "IV"])
+interaction_gene_chrV_start_coords <- start(ranges(protein_coding_interaction_genes_22G_coords_no_TMM)[seqnames(protein_coding_interaction_genes_22G_coords_no_TMM) == "V"])
+interaction_gene_chrX_start_coords <- start(ranges(protein_coding_interaction_genes_22G_coords_no_TMM)[seqnames(protein_coding_interaction_genes_22G_coords_no_TMM) == "X"])
+
+
+# Get the starting positions of the genes on each chromosome that DO NOT show a GxT interaction on 22G-RNA expression
+non_interaction_gene_chrI_start_coords <- start(ranges(protein_coding_all_briggsae_genes_coords)[seqnames(protein_coding_all_briggsae_genes_coords) == "I" & !(protein_coding_all_briggsae_genes_coords$gene_id %in% protein_coding_interaction_genes_22G_coords_no_TMM$gene_id)])
+non_interaction_gene_chrII_start_coords <- start(ranges(protein_coding_all_briggsae_genes_coords)[seqnames(protein_coding_all_briggsae_genes_coords) == "II" & !(protein_coding_all_briggsae_genes_coords$gene_id %in% protein_coding_interaction_genes_22G_coords_no_TMM$gene_id)])
+non_interaction_gene_chrIII_start_coords <- start(ranges(protein_coding_all_briggsae_genes_coords)[seqnames(protein_coding_all_briggsae_genes_coords) == "III" & !(protein_coding_all_briggsae_genes_coords$gene_id %in% protein_coding_interaction_genes_22G_coords_no_TMM$gene_id)])
+non_interaction_gene_chrIV_start_coords <- start(ranges(protein_coding_all_briggsae_genes_coords)[seqnames(protein_coding_all_briggsae_genes_coords) == "IV" & !(protein_coding_all_briggsae_genes_coords$gene_id %in% protein_coding_interaction_genes_22G_coords_no_TMM$gene_id)])
+non_interaction_gene_chrV_start_coords <- start(ranges(protein_coding_all_briggsae_genes_coords)[seqnames(protein_coding_all_briggsae_genes_coords) == "V" & !(protein_coding_all_briggsae_genes_coords$gene_id %in% protein_coding_interaction_genes_22G_coords_no_TMM$gene_id)])
+non_interaction_gene_chrX_start_coords <- start(ranges(protein_coding_all_briggsae_genes_coords)[seqnames(protein_coding_all_briggsae_genes_coords) == "X" & !(protein_coding_all_briggsae_genes_coords$gene_id %in% protein_coding_interaction_genes_22G_coords_no_TMM$gene_id)])
+
+
+# count how many GxT interaction genes are on chromosome arms
+sum(interaction_gene_chrI_start_coords <= 4210967 | interaction_gene_chrI_start_coords >= 10894967) + 
+  sum(interaction_gene_chrII_start_coords <= 4527293 | interaction_gene_chrII_start_coords >= 11632293) + 
+  sum(interaction_gene_chrIII_start_coords <= 4694591 | interaction_gene_chrIII_start_coords >= 10799591) + 
+  sum(interaction_gene_chrIV_start_coords <= 5726608 | interaction_gene_chrIV_start_coords >= 13831608) + 
+  sum(interaction_gene_chrV_start_coords <= 6174876 | interaction_gene_chrV_start_coords >= 14103876) + 
+  sum(interaction_gene_chrX_start_coords <= 8483699 | interaction_gene_chrX_start_coords >= 15428699)
+
+# Count how many GxT interaction genes are on chromosome centers
+sum(interaction_gene_chrI_start_coords >= 4210967 & interaction_gene_chrI_start_coords <= 10894967) + 
+  sum(interaction_gene_chrII_start_coords >= 4527293 & interaction_gene_chrII_start_coords <= 11632293) + 
+  sum(interaction_gene_chrIII_start_coords >= 4694591 & interaction_gene_chrIII_start_coords <= 10799591) + 
+  sum(interaction_gene_chrIV_start_coords >= 5726608 & interaction_gene_chrIV_start_coords <= 13831608) + 
+  sum(interaction_gene_chrV_start_coords >= 6174876 & interaction_gene_chrV_start_coords <= 14103876) + 
+  sum(interaction_gene_chrX_start_coords >= 8483699 & interaction_gene_chrX_start_coords <= 15428699)
+
+# Count how many non-interaction genes are on chromosome arms
+sum(non_interaction_gene_chrI_start_coords <= 4210967 | non_interaction_gene_chrI_start_coords >= 10894967) + 
+  sum(non_interaction_gene_chrII_start_coords <= 4527293 | non_interaction_gene_chrII_start_coords >= 11632293) + 
+  sum(non_interaction_gene_chrIII_start_coords <= 4694591 | non_interaction_gene_chrIII_start_coords >= 10799591) + 
+  sum(non_interaction_gene_chrIV_start_coords <= 5726608 | non_interaction_gene_chrIV_start_coords >= 13831608) + 
+  sum(non_interaction_gene_chrV_start_coords <= 6174876 | non_interaction_gene_chrV_start_coords >= 14103876) + 
+  sum(non_interaction_gene_chrX_start_coords <= 8483699 | non_interaction_gene_chrX_start_coords >= 15428699)
+
+# Count how many non-interaction genes are on chromosome centers
+sum(non_interaction_gene_chrI_start_coords >= 4210967 & non_interaction_gene_chrI_start_coords <= 10894967) + 
+  sum(non_interaction_gene_chrII_start_coords >= 4527293 & non_interaction_gene_chrII_start_coords <= 11632293) + 
+  sum(non_interaction_gene_chrIII_start_coords >= 4694591 & non_interaction_gene_chrIII_start_coords <= 10799591) + 
+  sum(non_interaction_gene_chrIV_start_coords >= 5726608 & non_interaction_gene_chrIV_start_coords <= 13831608) + 
+  sum(non_interaction_gene_chrV_start_coords >= 6174876 & non_interaction_gene_chrV_start_coords <= 14103876) + 
+  sum(non_interaction_gene_chrX_start_coords >= 8483699 & non_interaction_gene_chrX_start_coords <= 15428699)
