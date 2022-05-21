@@ -25,7 +25,7 @@ normalized_all_22G_expression <- cpm(lifted_allRaw22GCounts[,  c(2, 6, 7, 3, 8, 
 
 
 # Load in mRNA expression data from  Mark et al. 2019 - the file being loaded in 
-# here is Supplementary File S1 from that paper
+# here is Supplementary File S1 from that paper (https://onlinelibrary.wiley.com/doi/abs/10.1111/mec.15185)
 Mark_mRNA_expression_data <- read.csv("C:/Users/Daniel/Downloads/mec15185-sup-0002-files1 (1).csv", 
                                       stringsAsFactors=FALSE)
 
