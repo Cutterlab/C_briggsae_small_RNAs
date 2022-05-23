@@ -15,7 +15,8 @@ This Python script was used to apply SNPs and indels from the HK104 genome to th
 ### Get_Genes_That_Lifted_To_HK104.R
 After using flo to transfer gene annotation coordinates from the AF16 reference genome to our HK104 pseudo-reference genome, this R script was used to filter the results to keep only the genes for which all constituent parts (e.g. exons, UTRs) were successfully lifted from AF16 to HK104. 
 
-### Script to prepare objects for the counting script (for both AF16 and HK104)
+### Quantification_Annotation_Script_AF16.R and Quantification_Annotation_Script_HK104.R
+These R scripts create genome annotation files to be used with Small_RNA_Counting.R, using the relevant reference genome. Quantification_Annotation_Script_AF16.R is used for the AF16 reference genome, and Quantification_Annotation_Script_HK104.R is used for the HK104 pseudo-reference genome. Both of these scripts are modified from the script [c_elegans_reference_prep.R](https://github.com/ClaycombLab/Charlesworth_2020/blob/master/c_elegans_reference_prep.R), used in [Charlesworth et al. (2021)](https://academic.oup.com/nar/article/49/15/8836/6331683). 
 
 ### Script to count all small RNAs of every type
 
