@@ -8,6 +8,20 @@ library(data.table)
 library(BiocParallel)
 library(bitops)
 
+# This script uses gene annotations for genes 
+# (c_briggsae.PRJNA10731.WS272.canonical_geneset.gtf), repeats 
+# (c_briggsae.PRJNA10731.WS272.annotations.repeat.gff3), and transposons
+# (c_briggsae.PRJNA10731.WS272.annotations.transposable_element.gff3).  
+# c_briggsae.PRJNA10731.WS272.canonical_geneset.gtf is available
+# at https://downloads.wormbase.org/releases/WS272/species/c_briggsae/PRJNA10731/
+# c_briggsae.PRJNA10731.WS272.annotations.repeat.gff3 and 
+# c_briggsae.PRJNA10731.WS272.annotations.transposable_element.gff3
+# were created by extracting lines containing "repeat" and "transposable_element", 
+# respectively, from c_briggsae.PRJNA10731.WS272.annotations.gff3, which is also 
+# available at https://downloads.wormbase.org/releases/WS272/species/c_briggsae/PRJNA10731/ 
+
+
+
 base.chromosomes <- c("I", "II", "III", "IV", "V", "X")
 
 # Prepare combined reference at gene level
