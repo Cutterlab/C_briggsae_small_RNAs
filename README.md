@@ -20,7 +20,7 @@ After using flo to transfer gene annotation coordinates from the AF16 reference 
 ### Script to count all small RNAs of every type
 
 ### 22G-RNA_Differential_Expression.R
-This R script uses the results from the previous script to count the total number of 22G-RNAs aligning antisense to all transposons, repeats, pseudogenes, and protein-coding genes that are present in both genome annotations, and normalizes this expression data. It then identifies genes that are differentially expressed between genotypes and temperatures, as well as those showing a genotype-temperature interaction on 22G-RNA expression.
+This R script uses the results from the previous script to count the total number of 22G-RNAs aligning antisense to all transposons, repeats, pseudogenes, and protein-coding genes that are present in both genome annotations, and normalizes this expression data. It then identifies features that are differentially expressed between genotypes and temperatures, as well as those showing a genotype-temperature interaction on 22G-RNA expression. This script also fits linear models to 22G-RNA expression values, for individual features as well as entire chromosomes.
 
 ### 22G-RNA_mRNA_Expression_Comparisons.R
 This R script performs comparisons between 22G-RNA expression (this study, as calculated in 22G-RNA_Differential_Expression.R) and mRNA expression ([Mark et al. 2019](https://onlinelibrary.wiley.com/doi/full/10.1111/mec.15185)) for 12,623 genes with both types of data available, including separate comparisons for genes targeted by either CSR-1 or WAGO-1. 
