@@ -24,6 +24,7 @@ load("~/results.RData")
 load("~/resultsSizes.RData")
 load("~/WS272.HK104_gene.whole.transposons.repeats.RData")
 load("~/WS272.HK104_gene.parts.transposons.repeats.RData")
+load("~/bam_frames.RData")
 
 
 # The first section of this script calculates small RNA expression of each gene
@@ -397,3 +398,66 @@ sum(non_interaction_gene_chrI_start_coords >= 4210967 & non_interaction_gene_chr
   sum(non_interaction_gene_chrIV_start_coords >= 5726608 & non_interaction_gene_chrIV_start_coords <= 13831608) + 
   sum(non_interaction_gene_chrV_start_coords >= 6174876 & non_interaction_gene_chrV_start_coords <= 14103876) + 
   sum(non_interaction_gene_chrX_start_coords >= 8483699 & non_interaction_gene_chrX_start_coords <= 15428699)
+
+
+
+# For each replicate, count how many 22G-RNAs aligned to each chromosome, grouping
+# together all of the unplaced scaffolds as "other"
+firstBase <- "G"
+RNALength <- 22
+dataToPlot <- list()
+for (genotype in c("AF", "HK")){
+  # Create a dataframe of normalized 22G-RNA counts for each chromosome, for each sample
+  # with the given genotype (either AF or HK), except for HK30-1
+  RNA_counts <- list()
+  for (name in names(results)[grepl(genotype, names(results)) & names(results) != "HK30-1"]) {
+    # Select the dataframe containing all of the aligned small RNAs, based on the
+    # current sample
+    primary_bam_frame <- bam_frames[[name]]
+    
+    # Subset the dataframe of all aligned small RNAs to only contain those of the
+    # right length and first base (or all small RNAs if "all" was specified) 
+    # (these dataframes use "T" instead of "U", so return small RNAs starting 
+    # with "T" if "U" was specified in firstBase)
+    if (firstBase == "U") {
+      RNAs <- primary_bam_frame[which(primary_bam_frame$first == "T" & primary_bam_frame$width %in% c(RNALength - 1, RNALength, RNALength + 1)), ]
+    } else if (firstBase == "all") {
+      RNAs <- primary_bam_frame
+    } else {
+      RNAs <- primary_bam_frame[which(primary_bam_frame$first == firstBase & primary_bam_frame$width %in% c(RNALength - 1, RNALength, RNALength + 1)), ]
+    }
+    
+    RNAs$seqnames <- as.character(RNAs$seqnames)
+    RNAs$seqnames[grepl("cb25", RNAs$seqnames)] <- "Other"
+    RNAs$seqnames <- factor(RNAs$seqnames, levels = c("I", "II", "III", "IV", "V", "X", "Other"))
+    
+    raw_counts <- summary(RNAs$seqnames)
+    
+    # Normalize these counts to Read Per Million (RPM)
+    normalized_counts <- raw_counts  * (1000000 /  results.sizes[[name]][["perfect"]])
+    
+    
+    RNA_counts[[name]] <- data.frame(Chrom = names(normalized_counts), 
+                                     Normalized_Count = normalized_counts, 
+                                     Temp = substr(name, 3, 4))
+  }
+  
+  suppressWarnings(RNA_counts <- bind_rows(RNA_counts))
+  RNA_counts$Genotype <- genotype
+  dataToPlot[[genotype]] <- RNA_counts
+}
+
+dataToPlot <- bind_rows(dataToPlot)
+
+# Perform linear modeling of 22G-RNA expression, using the X chromosome as the
+# baseline chromosome, 20 degrees as the baseline temperature, and HK104 as the
+# baseline genotype. "Other" scaffolds are excluded from the model (though results
+# do not qualitatively change if they are included)
+dataToPlot$Chrom <- factor(dataToPlot$Chrom, levels = c("X", "I", "II", "III", "IV", "V", "Other"))
+dataToPlot$Temp <- factor(dataToPlot$Temp, levels = c(20, 14, 30))
+dataToPlot$Genotype <- factor(dataToPlot$Genotype, levels = c("HK", "AF"))
+summary(lm(Normalized_Count ~ Chrom + Genotype * Temp, data = dataToPlot[dataToPlot$Chrom != "Other", ]))
+
+# Repeat the linear modeling using AF16 as the baseline genotype
+dataToPlot$Genotype <- factor(dataToPlot$Genotype, levels = c("AF", "HK"))
+summary(lm(Normalized_Count ~ Chrom + Genotype * Temp, data = dataToPlot[dataToPlot$Chrom != "Other", ]))
