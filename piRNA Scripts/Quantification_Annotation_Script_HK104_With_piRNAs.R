@@ -13,7 +13,7 @@ library(bitops)
 # (c_briggsae_HK104_NGM_Alignments_repeat_annotations.gff3), and transposons
 # (c_briggsae_HK104_NGM_Alignments_transposable_element_annotations.gff3), all
 # of which are available at 
-# https://github.com/Cutterlab/C_briggsae_small_RNAs/blob/main/HK104%20Pseudo-reference%20Genome.zip
+# https://github.com/Cutterlab/C_briggsae_small_RNAs/blob/main/piRNA%20Scripts/HK104%20Pseudo-reference%20Genome%20With%20piRNAs.zip
 
 
 base.chromosomes <- c("I", "II", "III", "IV", "V", "X")
