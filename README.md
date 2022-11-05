@@ -1,6 +1,6 @@
 # Temperature-dependent small RNA expression depends on wild genetic backgrounds of *Caenorhabditis briggsae*
 
-Scripts for analyzing small RNA sequencing data in *C. briggsae* from [Fusca et al. (2022)](https://www.biorxiv.org/content/10.1101/2022.05.23.493161v1), as well as the pseudo-reference genome sequence for strain HK104 used in these analyses. 
+Scripts for analyzing small RNA sequencing data in *C. briggsae* from [Fusca et al. (2022)](https://doi.org/10.1093/molbev/msac218), as well as the pseudo-reference genome sequence for strain HK104 used in these analyses. 
 
 ## HK104 pseudo-reference genome sequence
 HK104 Pseudo-reference Genome.zip contains the files for the pseudo-reference genome sequence for HK104, based off of the reference sequence for AF16. Contains the genome FASTA file (c_briggsae_HK104_NGM_reference.fa), GFF3 files of annotated repeat regions (c_briggsae_HK104_NGM_Alignments_repeat_annotations.gff3) and transposable elements (c_briggsae_HK104_NGM_Alignments_transposable_element_annotations.gff3), and the GTF file of gene annotations (lifted_c_briggsae_HK104_NGM_Alignments_canonical_geneset.gtf).
